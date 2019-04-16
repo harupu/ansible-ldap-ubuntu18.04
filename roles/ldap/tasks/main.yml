@@ -1,13 +1,4 @@
 # Install LDAP
-- name: remove ldap
-  apt:
-    pkg:
-      - slapd
-      - ldap-utils
-      - libldap2-dev
-      - libsasl2-dev
-    state: absent
-
 - name: install ldap
   apt:
     pkg:
