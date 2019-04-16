@@ -1,0 +1,4 @@
+- hosts: ldapservers
+  become: yes
+  roles:
+    - roles/ldap

@@ -1,0 +1,4 @@
+LDAP_PASS_RAW: admin_password
+LDAP_DOMAIN: example.local
+LDAP_DN: dc=example,dc=local
+TEST_USER_PASSWORD: user_password

@@ -1,0 +1,37 @@
+# Install LDAP
+- name: remove ldap
+  apt:
+    pkg:
+      - slapd
+      - ldap-utils
+      - libldap2-dev
+      - libsasl2-dev
+    state: absent
+
+- name: install ldap
+  apt:
+    pkg:
+      - slapd
+      - ldap-utils
+      - libldap2-dev
+      - libsasl2-dev
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Configure default ldap params
+  shell: echo slapd slapd/internal/adminpw password {{ LDAP_PASS_RAW }} | debconf-set-selections; echo slapd slapd/internal/generated_adminpw password {{ LDAP_PASS_RAW }} | debconf-set-selections; echo slapd slapd/password1 password {{ LDAP_PASS_RAW }} | debconf-set-selections; echo slapd slapd/password2 password {{ LDAP_PASS_RAW }} | debconf-set-selections; echo slapd slapd/domain string "{{ LDAP_DOMAIN }}" | debconf-set-selections; echo slapd shared/organization string "{{ LDAP_DOMAIN }}" | debconf-set-selections; dpkg-reconfigure -f noninteractive slapd; service slapd start;
+
+- name: Place base.ldif
+  template: src=base.ldif.j2 dest=/tmp/base.ldif owner=root group=root
+
+- name: Apply base.ldif
+  shell: ldapadd -x -D "cn=admin,{{ LDAP_DN }}" -f /tmp/base.ldif -w {{ LDAP_PASS_RAW }}
+
+- name: Place ldapuser.ldif
+  template: src=ldapuser.ldif.j2 dest=/tmp/ldapuser.ldif owner=root group=root
+
+- name: Apply ldapuser.ldif
+  shell: ldapadd -x -D "cn=admin,{{ LDAP_DN }}" -f /tmp/ldapuser.ldif -w {{ LDAP_PASS_RAW }}
+
+- name: Change testuser's password
+  shell: ldappasswd -s {{ TEST_USER_PASSWORD }} -D "cn=admin,{{ LDAP_DN }}" -x -w {{ LDAP_PASS_RAW }}
