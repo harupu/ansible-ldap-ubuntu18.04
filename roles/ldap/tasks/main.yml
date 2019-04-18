@@ -25,4 +25,4 @@
   shell: ldapadd -x -D "cn=admin,{{ LDAP_DN }}" -f /tmp/ldapuser.ldif -w {{ LDAP_PASS_RAW }}
 
 - name: Change testuser's password
-  shell: ldappasswd -s {{ TEST_USER_PASSWORD }} -D "cn=admin,{{ LDAP_DN }}" -x -w {{ LDAP_PASS_RAW }}
+  shell: ldappasswd -s {{ TEST_USER_PASSWORD }} -D "cn=admin,{{ LDAP_DN }}" -x -w {{ LDAP_PASS_RAW }} "uid=testuser,ou=People,{{ LDAP_DN }}"
